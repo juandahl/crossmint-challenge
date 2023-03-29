@@ -1,0 +1,36 @@
+.polyanet-board {
+  display: flex;
+  gap: 1px;
+  border: 2px solid black;
+  margin: 20px auto;
+  width: 500px;
+  height: 500px;
+}
+
+.row {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 1px;
+}
+
+.col {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+}
+
+.cell {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 24px;
+  font-weight: bold;
+  cursor: pointer;
+  background-color: #f2f2f2;
+  flex: 1;
+}
+
+.cell:hover {
+  background-color: #e6e6e6;
+}
