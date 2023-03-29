@@ -1,9 +1,11 @@
 import config from "config/environmentKeys";
+import AutomaticCrossmint from "pages/automaticCrossmint/automaticCrossmint";
 import PolyanetCross from "pages/polyanetCross";
-import { Suspense } from "react";
 import { GridRepository } from "services/GridRepository";
 
 const gridRepository = new GridRepository();
+
+const PHASE: 1 | 2 = 2;
 
 function App() {
 	const candidateId = config.api.candidateId;
@@ -13,9 +15,12 @@ function App() {
 	}
 
 	return (
-		<Suspense fallback={<div>loading...</div>}>
-			<PolyanetCross gridRepository={gridRepository} candidateId={candidateId} />
-		</Suspense>
+		<>
+			{PHASE === 1 && <PolyanetCross gridRepository={gridRepository} candidateId={candidateId} />}
+			{PHASE === 2 && (
+				<AutomaticCrossmint gridRepository={gridRepository} candidateId={candidateId} />
+			)}
+		</>
 	);
 }
 

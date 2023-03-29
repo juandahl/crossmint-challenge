@@ -27,7 +27,7 @@ const Cell: React.FC<CellProps> = ({
 	});
 
 	return (
-		<button className="cell" onClick={toggleValue}>
+		<button className="cell" aria-label={`cell-${row}-${column}`} onClick={toggleValue}>
 			{value ? 1 : 0}
 		</button>
 	);

@@ -1,5 +1,9 @@
+// Config
 import config from "config/environmentKeys";
-import { GridState } from "types/grid";
+// Entities
+import { createGrid } from "entities/grid";
+// Types
+import { ApiGridState, GridState } from "types/grid";
 
 interface GetCurrentStateInput {
 	candidateId: string;
@@ -20,7 +24,7 @@ interface DeleteCellInput {
 interface GridStateApi {
 	map: {
 		id: string;
-		content: GridState;
+		content: ApiGridState;
 	};
 }
 
@@ -41,7 +45,24 @@ export class GridRepository {
 			const data = await fetch(url);
 			const { map: grid } = (await data.json()) as GridStateApi;
 
-			return grid.content;
+			return createGrid(grid.content);
+		} catch (err) {
+			return null;
+		}
+	}
+
+	/**
+	 * Retrieves the goal state of the grid
+	 * @param input - candidate id
+	 * @returns GridState
+	 */
+	async getGoalState(input: GetCurrentStateInput): Promise<GridState | null> {
+		try {
+			const url = `${this.baseUrl}/map/${input.candidateId}/goal`;
+			const data = await fetch(url);
+			const { map: grid } = (await data.json()) as GridStateApi;
+
+			return createGrid(grid.content);
 		} catch (err) {
 			return null;
 		}
