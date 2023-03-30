@@ -15,6 +15,8 @@ export interface PostActiveCellInput {
 	row: number;
 	column: number;
 	type: EndpointType;
+	direction?: string;
+	color?: string;
 }
 
 interface DeleteCellInput {
@@ -80,7 +82,7 @@ export class GridRepository {
 	 * @returns void
 	 */
 	async postActiveCell(input: PostActiveCellInput): Promise<void> {
-		const { type, ...body } = input;
+		const { type: _type, ...body } = input;
 		try {
 			const url = `${this.baseUrl}/${input.type}`;
 			await fetch(url, {

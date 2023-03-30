@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
+import { GridRepository } from "services/GridRepository";
 import {
 	BaseCell,
 	Cell,
@@ -21,6 +22,7 @@ const createSpace = (state: CellParam) => {
 		...state,
 		type: Types.SPACE,
 		isValid: () => true,
+		activateCell: () => Promise.resolve(),
 	};
 
 	return result;
@@ -32,6 +34,14 @@ const createPolyanet = (state: CellParam) => {
 		type: Types.POLYANET,
 		apiEndpoint: EndpointType.POLYANET,
 		isValid: () => true,
+		activateCell: (gridRepository: GridRepository, candidateId: string) => {
+			return gridRepository.postActiveCell({
+				row: state.row,
+				column: state.column,
+				type: EndpointType.POLYANET,
+				candidateId,
+			});
+		},
 	};
 
 	return result;
@@ -44,6 +54,15 @@ const createCometh = (state: CellParam, direction: string) => {
 		apiEndpoint: EndpointType.COMETH,
 		direction: direction.toLowerCase(),
 		isValid: () => !!direction,
+		activateCell: (gridRepository: GridRepository, candidateId) => {
+			return gridRepository.postActiveCell({
+				row: state.row,
+				column: state.column,
+				type: EndpointType.POLYANET,
+				candidateId,
+				direction,
+			});
+		},
 	};
 
 	return result;
@@ -57,6 +76,15 @@ const createSoloon = (state: CellParam, color: string) => {
 		color: color.toLowerCase(),
 		isValid: (adjacents: BaseCell[]) =>
 			adjacents.every((adjCell) => adjCell.type === Types.POLYANET) && !!color,
+		activateCell: (gridRepository: GridRepository, candidateId: string) => {
+			return gridRepository.postActiveCell({
+				row: state.row,
+				column: state.column,
+				type: EndpointType.POLYANET,
+				candidateId,
+				color,
+			});
+		},
 	};
 
 	return result;

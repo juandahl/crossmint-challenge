@@ -1,3 +1,5 @@
+import { GridRepository } from "services/GridRepository";
+
 export const enum Types {
 	"SPACE" = "SPACE",
 	"POLYANET" = "POLYANET",
@@ -34,6 +36,7 @@ export interface BaseCell {
 	type: CellTypes;
 	apiEndpoint?: EndpointCellTypes;
 	isValid: (adjacents: BaseCell[]) => boolean;
+	activateCell: (gridRepository: GridRepository, candidateId: string) => Promise<void>;
 }
 
 export interface SpaceCell extends BaseCell {

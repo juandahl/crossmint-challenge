@@ -1,5 +1,7 @@
-import { GridRepository, PostActiveCellInput } from "services/GridRepository";
-import { Cell, ComethCell, SoloonCell, Types } from "types/cell";
+// Services
+import { GridRepository } from "services/GridRepository";
+// Types
+import { Cell, Types } from "types/cell";
 import { GridState } from "types/grid";
 
 type IsValidGrid = [false, Cell] | [true];
@@ -23,9 +25,6 @@ export const getAdjacents = <T = Cell>(matrix: T[][], row: number, column: numbe
 			}
 		}
 	}
-
-	// eslint-disable-next-line no-console
-	console.log(adjacents);
 
 	return adjacents;
 };
@@ -64,28 +63,16 @@ export const completeGrid = async (
 			goal.map((rows: Cell[]) =>
 				rows.map(async (cell: Cell) => {
 					n++;
-					const { row, column, apiEndpoint } = cell;
-					if (!apiEndpoint) {
-						return Promise.resolve();
-					}
 
-					const input: PostActiveCellInput = { row, column, type: apiEndpoint, candidateId };
-
-					if (cell.type === Types.SOLOON) {
-						(input as unknown as SoloonCell).color = cell.color;
-					}
-
-					if (cell.type === Types.COMETH) {
-						(input as unknown as ComethCell).direction = cell.direction;
-					}
-
+					// That is to avoid extra call to the API. The best practice should be to call delete endpoint
+					// I considered like the map started all completed with spaces
 					if (cell.type === Types.SPACE) {
 						return Promise.resolve();
 					}
 
 					const promise = new Promise((resolve) => {
 						setTimeout(() => {
-							resolve(gridRepository.postActiveCell(input));
+							resolve(cell.activateCell(gridRepository, candidateId));
 						}, 350 * n);
 					});
 
