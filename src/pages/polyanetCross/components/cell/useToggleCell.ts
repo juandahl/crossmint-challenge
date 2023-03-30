@@ -2,13 +2,14 @@ import React from "react";
 import { useMutation } from "react-query";
 // Services
 import { GridRepository } from "services/GridRepository";
+// Types
+import { Cell } from "types/cell";
 
 interface UseToggleCellValueProps {
 	gridRepository: GridRepository;
 	candidateId: string;
 	defaultValue: boolean;
-	row: number;
-	column: number;
+	cell: Cell;
 }
 
 interface UseToggleCellValueResponse {
@@ -23,23 +24,29 @@ interface UseToggleCellValueResponse {
  * @returns UseToggleCellValueResponse
  */
 const useToggleCellValue = ({
-	row,
-	column,
+	cell,
 	gridRepository,
 	candidateId,
 	defaultValue,
 }: UseToggleCellValueProps): UseToggleCellValueResponse => {
+	const { row, column, apiEndpoint: type } = cell;
+
 	// States
 	const [value, setValue] = React.useState(defaultValue);
 
 	// Mutations
-	const { isLoading: isLoadinActivate, mutate: callActivate } = useMutation("activateCell", () =>
-		gridRepository.postActiveCell({
-			candidateId,
-			row,
-			column,
-		})
-	);
+	const { isLoading: isLoadinActivate, mutate: callActivate } = useMutation("activateCell", () => {
+		if (type) {
+			return gridRepository.postActiveCell({
+				candidateId,
+				row,
+				column,
+				type,
+			});
+		}
+
+		return Promise.resolve();
+	});
 
 	const { isLoading: isLoadingDelete, mutate: callDelete } = useMutation("deleteCell", () =>
 		gridRepository.deleteCell({

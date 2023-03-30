@@ -1,4 +1,5 @@
-import { Cell } from "types/cell";
+import { GridRepository, PostActiveCellInput } from "services/GridRepository";
+import { Cell, ComethCell, SoloonCell, Types } from "types/cell";
 import { GridState } from "types/grid";
 
 type IsValidGrid = [false, Cell] | [true];
@@ -50,4 +51,54 @@ export const validateGrid = (grid: GridState): IsValidGrid => {
 	}
 
 	return [true];
+};
+
+/**
+ * Given a grid, validate all its cells and return either a boolean indicating if the grid is valid or an array with the first invalid cell found
+ * @param {GridState} grid - The grid to validate
+ * @returns {IsValidGrid} An array representing either a valid grid or the first invalid cell found
+ */
+export const completeGrid = async (
+	goal: GridState,
+	gridRepository: GridRepository,
+	candidateId: string
+): Promise<void> => {
+	try {
+		let n = 0;
+		await Promise.all(
+			goal.map((rows: Cell[]) =>
+				rows.map(async (cell: Cell) => {
+					n++;
+					const { row, column, apiEndpoint } = cell;
+					if (!apiEndpoint) {
+						return Promise.resolve();
+					}
+
+					const input: PostActiveCellInput = { row, column, type: apiEndpoint, candidateId };
+
+					if (cell.type === Types.SOLOON) {
+						(input as unknown as SoloonCell).color = cell.color;
+					}
+
+					if (cell.type === Types.COMETH) {
+						(input as unknown as ComethCell).direction = cell.direction;
+					}
+
+					if (cell.type === Types.SPACE) {
+						return Promise.resolve();
+					}
+
+					const promise = new Promise((resolve) => {
+						setTimeout(() => {
+							resolve(gridRepository.postActiveCell(input));
+						}, 350 * n);
+					});
+
+					return await promise;
+				})
+			)
+		);
+	} catch (error) {
+		return Promise.reject(error);
+	}
 };

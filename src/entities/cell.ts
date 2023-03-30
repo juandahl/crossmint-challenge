@@ -4,6 +4,7 @@ import {
 	Cell,
 	CellTypes,
 	ComethCell,
+	EndpointType,
 	PolyanetCell,
 	SoloonCell,
 	SpaceCell,
@@ -29,6 +30,7 @@ const createPolyanet = (state: CellParam) => {
 	const result: PolyanetCell = {
 		...state,
 		type: Types.POLYANET,
+		apiEndpoint: EndpointType.POLYANET,
 		isValid: () => true,
 	};
 
@@ -39,8 +41,9 @@ const createCometh = (state: CellParam, direction: string) => {
 	const result: ComethCell = {
 		...state,
 		type: Types.COMETH,
-		direction,
-		isValid: () => true,
+		apiEndpoint: EndpointType.COMETH,
+		direction: direction.toLowerCase(),
+		isValid: () => !!direction,
 	};
 
 	return result;
@@ -50,8 +53,10 @@ const createSoloon = (state: CellParam, color: string) => {
 	const result: SoloonCell = {
 		...state,
 		type: Types.SOLOON,
-		color,
-		isValid: () => true,
+		apiEndpoint: EndpointType.SOLOON,
+		color: color.toLowerCase(),
+		isValid: (adjacents: BaseCell[]) =>
+			adjacents.every((adjCell) => adjCell.type === Types.POLYANET) && !!color,
 	};
 
 	return result;

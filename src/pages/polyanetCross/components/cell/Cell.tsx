@@ -1,5 +1,8 @@
 import React from "react";
+// Services
 import { GridRepository } from "services/GridRepository";
+// Types
+import { Cell as TCell } from "types/cell";
 
 import useToggleCellValue from "./useToggleCell";
 
@@ -7,27 +10,19 @@ interface CellProps {
 	defaultValue: boolean;
 	gridRepository: GridRepository;
 	candidateId: string;
-	row: number;
-	column: number;
+	cell: TCell;
 }
 
-const Cell: React.FC<CellProps> = ({
-	defaultValue = false,
-	gridRepository,
-	candidateId,
-	row,
-	column,
-}) => {
+const Cell: React.FC<CellProps> = ({ defaultValue = false, gridRepository, candidateId, cell }) => {
 	const { value, toggleValue } = useToggleCellValue({
 		defaultValue,
 		gridRepository,
 		candidateId,
-		row,
-		column,
+		cell,
 	});
 
 	return (
-		<button className="cell" aria-label={`cell-${row}-${column}`} onClick={toggleValue}>
+		<button className="cell" aria-label={`cell-${cell.row}-${cell.column}`} onClick={toggleValue}>
 			{value ? 1 : 0}
 		</button>
 	);

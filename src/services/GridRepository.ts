@@ -3,16 +3,18 @@ import config from "config/environmentKeys";
 // Entities
 import { createGrid } from "entities/grid";
 // Types
+import { EndpointType } from "types/cell";
 import { ApiGridState, GridState } from "types/grid";
 
 interface GetCurrentStateInput {
 	candidateId: string;
 }
 
-interface PostActiveCellInput {
+export interface PostActiveCellInput {
 	candidateId: string;
 	row: number;
 	column: number;
+	type: EndpointType;
 }
 
 interface DeleteCellInput {
@@ -26,6 +28,10 @@ interface GridStateApi {
 		id: string;
 		content: ApiGridState;
 	};
+}
+
+interface GoalStateApi {
+	goal: ApiGridState;
 }
 
 export class GridRepository {
@@ -60,9 +66,9 @@ export class GridRepository {
 		try {
 			const url = `${this.baseUrl}/map/${input.candidateId}/goal`;
 			const data = await fetch(url);
-			const { map: grid } = (await data.json()) as GridStateApi;
+			const { goal: grid } = (await data.json()) as GoalStateApi;
 
-			return createGrid(grid.content);
+			return createGrid(grid);
 		} catch (err) {
 			return null;
 		}
@@ -74,14 +80,15 @@ export class GridRepository {
 	 * @returns void
 	 */
 	async postActiveCell(input: PostActiveCellInput): Promise<void> {
+		const { type, ...body } = input;
 		try {
-			const url = `${this.baseUrl}/polyanets`;
+			const url = `${this.baseUrl}/${input.type}`;
 			await fetch(url, {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
 				},
-				body: JSON.stringify(input),
+				body: JSON.stringify(body),
 			});
 		} catch (err) {
 			// eslint-disable-next-line no-console

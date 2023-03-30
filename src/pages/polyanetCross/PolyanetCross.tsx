@@ -33,8 +33,7 @@ const PolyanetCross: React.FC<PolyanetCrossProps> = ({ gridRepository, candidate
 							defaultValue={!!cellValue}
 							gridRepository={gridRepository}
 							candidateId={candidateId}
-							row={rowIndex}
-							column={colIndex}
+							cell={cellValue}
 						/>
 					))}
 				</div>

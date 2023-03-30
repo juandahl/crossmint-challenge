@@ -1,8 +1,15 @@
-export enum Types {
+export const enum Types {
 	"SPACE" = "SPACE",
 	"POLYANET" = "POLYANET",
 	"COMETH" = "COMETH",
 	"SOLOON" = "SOLOON",
+}
+
+export const enum EndpointType {
+	"SPACE" = "SPACE",
+	"POLYANET" = "polyanets",
+	"COMETH" = "comeths",
+	"SOLOON" = "soloons",
 }
 
 export const enum ApiCellState {
@@ -19,11 +26,13 @@ export const enum ApiCellState {
 }
 
 export type CellTypes = keyof typeof Types;
+type EndpointCellTypes = (typeof EndpointType)[keyof typeof EndpointType];
 
 export interface BaseCell {
 	row: number;
 	column: number;
 	type: CellTypes;
+	apiEndpoint?: EndpointCellTypes;
 	isValid: (adjacents: BaseCell[]) => boolean;
 }
 
@@ -33,15 +42,18 @@ export interface SpaceCell extends BaseCell {
 
 export interface PolyanetCell extends BaseCell {
 	type: Types.POLYANET;
+	apiEndpoint: EndpointType.POLYANET;
 }
 
 export interface ComethCell extends BaseCell {
 	type: Types.COMETH;
+	apiEndpoint: EndpointType.COMETH;
 	direction: string;
 }
 
 export interface SoloonCell extends BaseCell {
 	type: Types.SOLOON;
+	apiEndpoint: EndpointType.SOLOON;
 	color: string;
 }
 
