@@ -10,29 +10,24 @@ type IsValidGrid = [false, Cell] | [true];
  * @param {Cell} cell - The cell to get the adjacent cells from
  * @returns {Array<Cell>} An array containing all adjacent cells to the input cell
  */
-const getAdjacents = (grid: GridState, cell: Cell) => {
-	const numRows = grid.length;
-	const numCols = grid[0].length;
-	const result = [];
-	const { row, column } = cell;
+export const getAdjacents = <T = Cell>(matrix: T[][], row: number, column: number): T[] => {
+	const rows = matrix.length;
+	const cols = matrix[0].length;
 
-	for (let i = -1; i <= 1; i++) {
-		for (let j = -1; j <= 1; j++) {
-			const newRow = row + i;
-			const newCol = column + j;
-			if (
-				newRow >= 0 &&
-				newRow < numRows &&
-				newCol >= 0 &&
-				newCol < numCols &&
-				!(i === 0 && j === 0)
-			) {
-				result.push(grid[newRow][newCol]);
+	const adjacents = [];
+
+	for (let i = Math.max(0, row - 1); i <= Math.min(rows - 1, row + 1); i++) {
+		for (let j = Math.max(0, column - 1); j <= Math.min(cols - 1, column + 1); j++) {
+			if (i !== row || j !== column) {
+				adjacents.push(matrix[i][j]);
 			}
 		}
 	}
 
-	return result;
+	// eslint-disable-next-line no-console
+	console.log(adjacents);
+
+	return adjacents;
 };
 
 /**
@@ -43,7 +38,7 @@ const getAdjacents = (grid: GridState, cell: Cell) => {
 export const validateGrid = (grid: GridState): IsValidGrid => {
 	for (const rows of grid) {
 		for (const cell of rows) {
-			const adjacents = getAdjacents(grid, cell);
+			const adjacents = getAdjacents(grid, cell.row, cell.column);
 			if (!cell.isValid(adjacents)) {
 				return [false, cell];
 			}
