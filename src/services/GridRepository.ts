@@ -1,14 +1,22 @@
+// Config
 import config from "config/environmentKeys";
-import { GridState } from "types/grid";
+// Entities
+import { createGrid } from "entities/grid";
+// Types
+import { EndpointType } from "types/cell";
+import { ApiGridState, GridState } from "types/grid";
 
 interface GetCurrentStateInput {
 	candidateId: string;
 }
 
-interface PostActiveCellInput {
+export interface PostActiveCellInput {
 	candidateId: string;
 	row: number;
 	column: number;
+	type: EndpointType;
+	direction?: string;
+	color?: string;
 }
 
 interface DeleteCellInput {
@@ -20,8 +28,12 @@ interface DeleteCellInput {
 interface GridStateApi {
 	map: {
 		id: string;
-		content: GridState;
+		content: ApiGridState;
 	};
+}
+
+interface GoalStateApi {
+	goal: ApiGridState;
 }
 
 export class GridRepository {
@@ -41,7 +53,24 @@ export class GridRepository {
 			const data = await fetch(url);
 			const { map: grid } = (await data.json()) as GridStateApi;
 
-			return grid.content;
+			return createGrid(grid.content);
+		} catch (err) {
+			return null;
+		}
+	}
+
+	/**
+	 * Retrieves the goal state of the grid
+	 * @param input - candidate id
+	 * @returns GridState
+	 */
+	async getGoalState(input: GetCurrentStateInput): Promise<GridState | null> {
+		try {
+			const url = `${this.baseUrl}/map/${input.candidateId}/goal`;
+			const data = await fetch(url);
+			const { goal: grid } = (await data.json()) as GoalStateApi;
+
+			return createGrid(grid);
 		} catch (err) {
 			return null;
 		}
@@ -53,14 +82,15 @@ export class GridRepository {
 	 * @returns void
 	 */
 	async postActiveCell(input: PostActiveCellInput): Promise<void> {
+		const { type: _type, ...body } = input;
 		try {
-			const url = `${this.baseUrl}/polyanets`;
+			const url = `${this.baseUrl}/${input.type}`;
 			await fetch(url, {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
 				},
-				body: JSON.stringify(input),
+				body: JSON.stringify(body),
 			});
 		} catch (err) {
 			// eslint-disable-next-line no-console

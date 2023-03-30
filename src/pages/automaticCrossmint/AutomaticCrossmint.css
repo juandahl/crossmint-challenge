@@ -1,0 +1,29 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+}
+
+.button-container {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+.btn-primary {
+  background-color: blue;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 10px;
+}
+
+.btn-secondary {
+  background-color: green;
+  border-radius: 12px;
+  color: white;
+  border: none;
+  padding: 10px;
+}
