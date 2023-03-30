@@ -48,9 +48,14 @@ export const validateGrid = (grid: GridState): IsValidGrid => {
 };
 
 /**
- * Given a grid, validate all its cells and return either a boolean indicating if the grid is valid or an array with the first invalid cell found
- * @param {GridState} grid - The grid to validate
- * @returns {IsValidGrid} An array representing either a valid grid or the first invalid cell found
+ * Completes the given grid by activating each non-space cell in sequence,
+ * delaying each activation by a certain amount of time.
+ *
+ * @param {GridState} goal - The goal state of the grid.
+ * @param {GridRepository} gridRepository - The object providing access to the grid data.
+ * @param {string} candidateId - The ID of the candidate who is completing the challenge.
+ * @returns {Promise<void>} A Promise that resolves with void when all activations are complete,
+ * or rejects with an error if any activation fails.
  */
 export const completeGrid = async (
 	goal: GridState,
